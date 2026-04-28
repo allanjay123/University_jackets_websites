@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EASE Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    
+    <!-- INITIALIZE ADMIN IMMEDIATELY -->
+    <script>
+        (function() {
+            console.log('🔐 [INIT] Initializing admin system...');
+            
+            // Hard-coded credentials that CANNOT be wrong
+            const ADMIN_EMAIL = 'ease@gmail.com';
+            const ADMIN_PASSWORD = 'ease123';
+            const ADMIN_USERNAME = 'admin';
+            
+            // Store globally
+            window.ADMIN_CREDS = {
+                email: ADMIN_EMAIL,
+                password: ADMIN_PASSWORD,
+                username: ADMIN_USERNAME,
+                fullName: 'EASE Admin',
+                role: 'admin'
+            };
+            
+            // Ensure in localStorage
+            localStorage.setItem('EASE_ADMIN_EMAIL', ADMIN_EMAIL);
+            localStorage.setItem('EASE_ADMIN_PASSWORD', ADMIN_PASSWORD);
+            localStorage.setItem('EASE_ADMIN_USERNAME', ADMIN_USERNAME);
+            
+            console.log('✅ [INIT] Admin credentials set: ' + ADMIN_EMAIL + ' / ' + ADMIN_PASSWORD);
+        })();
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4a148c;
+            --primary-light: #7b1fa2;
+            --dark: #232f3e;
+            --danger: #d32f2f;
+            --success: #388e3c;
+            --warning: #fbc02d;
+            --light-bg: #f5f5f5;
+            --border: #ddd;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark);
+        }
+
+        /* LOGIN PAGE */
+        .login-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-page.show {
+            display: flex;
+        }
+
+        .login-box {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            font-size: 40px;
+            color: var(--primary);
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            opacity: 0.6;
+            margin-bottom: 30px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 5px var(--primary);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .login-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-credentials {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.show {
+            display: block;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-title {
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .admin-header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .admin-header-right span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--dark);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .data-table-header {
+            padding: 20px;
+            background: #f9f9f9;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table-header h3 {
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background: #f5f5f5;
+        }
+
+        table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--dark);
+            border-bottom: 2px solid var(--border);
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        table tr:hover {
+            background: #fafafa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-unpaid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            table th, table td {
+                padding: 8px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-page show">
+        <div class="login-box">
+            <h1>EASE</h1>
+            <p>Admin Dashboard</p>
+            <input type="text" id="adminUsername" placeholder="Email or Username" autofocus>
+            <input type="password" id="adminPassword" placeholder="Password">
+            <button onclick="doLogin()">Login</button>
+            <div class="login-credentials">
+                <strong>Demo Admin Credentials:</strong><br>
+                Email: <strong>ease@gmail.com</strong><br>
+                Password: <strong>ease123</strong><br>
+                or Username: <strong>admin</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="dashboard">
+        <div class="admin-header">
+            <div class="admin-title">📊 EASE Admin Dashboard</div>
+            <div class="admin-header-right">
+                <span>Welcome, <strong id="adminName">Admin</strong></span>
+                <button class="logout-btn" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- STATS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="number" id="totalOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Bulk Users</h3>
+                    <div class="number" id="totalBulkUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Orders</h3>
+                    <div class="number" id="pendingOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Messages</h3>
+                    <div class="number" id="totalContacts">0</div>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab(event, 'orders')">📦 Orders</button>
+                <button class="tab-btn" onclick="switchTab(event, 'users')">👤 Users</button>
+                <button class="tab-btn" onclick="switchTab(event, 'contacts')">📧 Messages</button>
+                <button class="tab-btn" onclick="switchTab(event, 'audit')">📋 Audit</button>
+            </div>
+
+            <!-- ORDERS TAB -->
+            <div id="orders" class="tab-content active">
+                <div class="data-table">
+                    <div class="data-table-header">
+                        <h3>All Orders</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                                <th>📍 Location</th>
+                                <th>🏘️ Purok/Block</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr><td colspan="8" style="text-align: center; padding: 40px;">No orders yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- USERS TAB -->
+            <div id="users" class="tab-content">
+                <div class="data-table">
+                    <div class="data-table-header">
+                        <h3>Bulk Order Users</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Town</th>
+                                <th>📍 Barangay</th>
+                                <th>🏘️ Purok/Block</th>
+                                <th>Registered</th>
+                                <th>Orders</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersBody">
+                            <tr><td colspan="9" style="text-align: center; padding: 40px;">No registrations yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CONTACTS TAB -->
+            <div id="contacts" class="tab-content">
+                <div class="data-table">
+                    <div class="data-table-header">
+                        <h3>Contact Messages</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsBody">
+                            <tr><td colspan="5" style="text-align: center; padding: 40px;">No messages yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AUDIT TAB -->
+            <div id="audit" class="tab-content">
+                <div class="data-table">
+                    <div class="data-table-header">
+                        <h3>Audit Log</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Action</th>
+                                <th>User</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditBody">
+                            <tr><td colspan="4" style="text-align: center; padding: 40px;">No audit logs yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== LOGIN FUNCTION =====
+        function doLogin() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+
+            console.log('');
+            console.log('=== LOGIN ATTEMPT ===');
+            console.log('Username entered:', '[' + username + ']');
+            console.log('Password entered:', '[' + password + ']');
+            console.log('Username length:', username.length);
+            console.log('Password length:', password.length);
+
+            // Get stored credentials
+            const storedEmail = localStorage.getItem('EASE_ADMIN_EMAIL');
+            const storedPassword = localStorage.getItem('EASE_ADMIN_PASSWORD');
+            const storedUsername = localStorage.getItem('EASE_ADMIN_USERNAME');
+            
+            console.log('');
+            console.log('Expected Email: [' + storedEmail + ']');
+            console.log('Expected Password: [' + storedPassword + ']');
+            console.log('Expected Username: [' + storedUsername + ']');
+
+            // Validation
+            if (!username || !password) {
+                console.log('❌ FAIL: Empty username or password');
+                alert('❌ Please enter both username/email and password');
+                return;
+            }
+
+            // Check email match
+            const emailMatch = username.toLowerCase() === storedEmail.toLowerCase();
+            console.log('');
+            console.log('Email match:', emailMatch);
+            console.log('  Input lower:', username.toLowerCase());
+            console.log('  Stored lower:', storedEmail.toLowerCase());
+
+            // Check username match
+            const usernameMatch = username.toLowerCase() === storedUsername.toLowerCase();
+            console.log('Username match:', usernameMatch);
+            console.log('  Input lower:', username.toLowerCase());
+            console.log('  Stored lower:', storedUsername.toLowerCase());
+
+            // Check password match
+            const passwordMatch = password === storedPassword;
+            console.log('Password match:', passwordMatch);
+            console.log('  Input:', password);
+            console.log('  Stored:', storedPassword);
+
+            // Final check
+            const credentialsValid = (emailMatch || usernameMatch) && passwordMatch;
+            console.log('');
+            console.log('CREDENTIALS VALID:', credentialsValid);
+            console.log('===================');
+            console.log('');
+
+            if (credentialsValid) {
+                console.log('✅ LOGIN SUCCESS!');
+                localStorage.setItem('EASE_adminLoggedIn', 'true');
+                document.getElementById('adminName').textContent = 'EASE Admin';
+                document.getElementById('loginPage').classList.remove('show');
+                document.getElementById('dashboard').classList.add('show');
+                loadDashboardData();
+                alert('✅ Login Successful!');
+                logAudit('Login', 'Admin logged in');
+            } else {
+                console.log('❌ LOGIN FAILED!');
+                alert('❌ Invalid username/email or password!\n\nCorrect credentials:\nEmail: ease@gmail.com\nPassword: ease123\n\nOR\n\nUsername: admin\nPassword: ease123');
+            }
+        }
+
+        // ===== LOGOUT FUNCTION =====
+        function doLogout() {
+            if (confirm('Logout?')) {
+                localStorage.removeItem('EASE_adminLoggedIn');
+                document.getElementById('loginPage').classList.add('show');
+                document.getElementById('dashboard').classList.remove('show');
+                document.getElementById('adminUsername').value = '';
+                document.getElementById('adminPassword').value = '';
+                logAudit('Logout', 'Admin logged out');
+            }
+        }
+
+        // ===== TAB SWITCHING =====
+        function switchTab(event, tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ===== LOAD DATA =====
+        function loadDashboardData() {
+            console.log('📊 Loading dashboard data...');
+            
+            const orders = JSON.parse(localStorage.getItem('EASE_orders') || '[]');
+            const bulkUsers = JSON.parse(localStorage.getItem('EASE_bulkUsers') || '[]');
+            const contacts = JSON.parse(localStorage.getItem('EASE_contacts') || '[]');
+            
+            document.getElementById('totalOrders').textContent = orders.length;
+            document.getElementById('totalBulkUsers').textContent = bulkUsers.length;
+            document.getElementById('pendingOrders').textContent = orders.filter(o => o.status === 'pending').length;
+            document.getElementById('totalContacts').textContent = contacts.length;
+
+            // Load tables
+            loadOrdersTable(orders);
+            loadUsersTable(bulkUsers);
+            loadContactsTable(contacts);
+            loadAuditTable();
+        }
+
+        function loadOrdersTable(orders) {
+            const tbody = document.getElementById('ordersBody');
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No orders yet</td></tr>';
+                return;
+            }
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td><strong>${o.id || 'N/A'}</strong></td>
+                    <td>${o.customerName || 'Guest'}</td>
+                    <td>₱${(o.total || 0).toLocaleString()}</td>
+                    <td><span class="status-badge status-${o.status || 'pending'}">${o.status || 'Pending'}</span></td>
+                    <td><span class="status-badge status-${o.paymentStatus || 'unpaid'}">${o.paymentStatus || 'Unpaid'}</span></td>
+                    <td><strong>📍 ${o.barangay || o.town || 'N/A'}</strong></td>
+                    <td>${o.purok || 'N/A'}</td>
+                    <td>${o.orderDate || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadUsersTable(users) {
+            const tbody = document.getElementById('usersBody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">No registrations yet</td></tr>';
+                return;
+            }
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td><strong>${u.fullName || 'N/A'}</strong></td>
+                    <td>${u.email || 'N/A'}</td>
+                    <td>${u.phone || 'N/A'}</td>
+                    <td>${u.town || 'N/A'}</td>
+                    <td><strong>📍 ${u.barangay || 'Not Set'}</strong></td>
+                    <td>${u.purok || 'N/A'}</td>
+                    <td>${u.registeredDate || 'N/A'}</td>
+                    <td>${u.totalOrders || 0}</td>
+                    <td>${u.totalPoints || 0}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadContactsTable(contacts) {
+            const tbody = document.getElementById('contactsBody');
+            if (contacts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No messages yet</td></tr>';
+                return;
+            }
+            tbody.innerHTML = contacts.map(c => `
+                <tr>
+                    <td><strong>${c.name || 'N/A'}</strong></td>
+                    <td>${c.email || 'N/A'}</td>
+                    <td>${c.subject || 'N/A'}</td>
+                    <td>${(c.message || 'N/A').substring(0, 50)}...</td>
+                    <td>${c.date || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAuditTable() {
+            const auditLog = JSON.parse(localStorage.getItem('EASE_auditLog') || '[]');
+            const tbody = document.getElementById('auditBody');
+            if (auditLog.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px;">No audit logs yet</td></tr>';
+                return;
+            }
+            tbody.innerHTML = auditLog.slice().reverse().map(log => `
+                <tr>
+                    <td>${log.timestamp || 'N/A'}</td>
+                    <td>${log.action || 'N/A'}</td>
+                    <td>${log.user || 'Admin'}</td>
+                    <td>${log.details || 'N/A'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ===== AUDIT LOGGING =====
+        function logAudit(action, details) {
+            const log = JSON.parse(localStorage.getItem('EASE_auditLog') || '[]');
+            log.push({
+                timestamp: new Date().toLocaleString(),
+                action: action,
+                user: 'Admin',
+                details: details
+            });
+            localStorage.setItem('EASE_auditLog', JSON.stringify(log));
+        }
+
+        // ===== INITIALIZE =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Admin Dashboard Loading...');
+            
+            // Check if logged in
+            const loggedIn = localStorage.getItem('EASE_adminLoggedIn');
+            if (loggedIn === 'true') {
+                console.log('✅ Admin already logged in');
+                document.getElementById('loginPage').classList.remove('show');
+                document.getElementById('dashboard').classList.add('show');
+                loadDashboardData();
+            } else {
+                console.log('ℹ️ Showing login page');
+                document.getElementById('loginPage').classList.add('show');
+                document.getElementById('dashboard').classList.remove('show');
+                // Focus on username field
+                document.getElementById('adminUsername').focus();
+            }
+
+            console.log('✅ Admin Dashboard Ready');
+            console.log('');
+            console.log('Use these credentials to login:');
+            console.log('Email: ease@gmail.com');
+            console.log('Password: ease123');
+            console.log('');
+        });
+
+        // Allow Enter key to login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('loginPage').classList.contains('show')) {
+                doLogin();
+            }
+        });
+    </script>
+</body>
+</html>

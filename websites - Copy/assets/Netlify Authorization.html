@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- saved from url=(0492)https://api.netlify.com/auth/done?state=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaWQiOiI2ODQ3YzU1Y2E2YzkyNjJlZTgwMTU1M2YiLCJleHAiOjE3NzczNjcwMDQsImxvZ2luIjp0cnVlfQ.oE5e_m7H9_3lNjo1Sn3a89WU4UoK9NW33kXEgzMydOg&iss=https%3A%2F%2Faccounts.google.com&code=4%2F0AeoWuM-9FGRJjsz2JgloZfz8o8EFXWjAExF9kicjPaEDQVKcYkmk4tD1ls9f4A34HBAezg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Netlify Authorization</title>
+  <link href="./Netlify Authorization_files/css" rel="stylesheet" type="text/css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      background: rgb(14, 30, 37);
+      color: white;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 24px;
+    }
+
+    h1:only-child {
+      text-align: center;
+    }
+
+    p,
+    div.field,
+    div.message,
+    div.error {
+      margin: 16px 0 0 0;
+      line-height: 1.4;
+    }
+
+    .main {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 75%;
+      max-width: 364px;
+      margin-top: 24px;
+      padding: 24px;
+      background: white;
+      color: rgb(14, 30, 37);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px 0 rgba(14, 30, 37, .16);
+    }
+
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <img alt="Netlify" title="Netlify" class="logo" src="./Netlify Authorization_files/logo-netlify-monogram-fullcolor-darkmode.svg">
+    <div class="card">
+  <h1 class="single-message">Authorized</h1>
+</div>
+
+<script>
+(function() {
+function recieveMessage(e) {
+  if (e.data !== "authorizing:google") {
+    return;
+  }
+  const match = e.origin.match(/https?:\/\/([^:]+)(:\d+)?$/);
+  let host = match && match[1];
+  if (!host) {
+    return;
+  }
+  const domainParts = host.split("--");
+  host = domainParts[domainParts.length - 1];
+
+  if ( host === "app.netlify.app" ||  host === "app.netlify.com" ||  host === "app.netlify.com" ||  host === "localhost") {
+    window.opener.postMessage(
+      'authorization:google:success:{\"token\":\"ya29.a0AQvPyIP9_F8SdZVa3IvjheEl_WwLKGIamIvYlcl6EOvASgtPj0Ct82k4DP04rnywMHrvT9XkBrw5NE0HBcHktYEA7TN8Qcy7t-HwbJyg72OjNjEBLCDlZwJgEpgMIDwz_ACGMR1srplqynIqYKAPS3qUojyWFfZwBdZaAnCrZpTOAABXxez9KZnJi-oHQusAledRW85tbBpGvncKZiiFsIyZI4huAMncdfeDVH_gCDJAa44xNU9D58N8rO8kG7bnp5uBLWQtkwov2rBkMK8ybQy8bHEaCgYKAZcSARISFQHGX2MiPom4R2tZBeUIS5yyvscc2A0290\",\"provider\":\"google\",\"user\":{\"avatar\":\"https://secure.gravatar.com/avatar/58bbd8014c3cc9e0d4be98a4b6e29832?s=30\",\"connected_accounts\":{\"google\":\"allantagapan74@gmail.com\"},\"created_at\":\"2025-11-26T07:22:55.437Z\",\"email\":\"allantagapan74@gmail.com\",\"favorite_sites\":[],\"full_name\":null,\"last_login\":\"2026-04-28T09:00:25.134Z\",\"pending_email\":null,\"questionnaire\":{\"_id\":null,\"company_size_c\":null,\"job_leadership_title\":null,\"job_role\":null,\"use_case\":null,\"use_case_context\":null,\"use_case_something_else\":null},\"saml_slug\":null,\"site_count\":0,\"slug\":null,\"uid\":null,\"account_id\":\"6926aacf84a626080dd55ce5\",\"tracking_id\":\"6926aacf84a626080dd55ce2\",\"id\":\"6926aacf84a626080dd55ce2\",\"login_providers\":[\"google\"],\"avatar_url\":\"https://secure.gravatar.com/avatar/58bbd8014c3cc9e0d4be98a4b6e29832?s=30\",\"onboarding_progress\":{\"guided_onboarding\":{\"default\":{\"customize-site-name\":\"open\",\"deploy-again\":\"open\",\"view-deploy-summary\":\"open\",\"preview-your-deploy\":\"open\"}}},\"sandbox\":false,\"graphql_enabled\":false,\"has_pending_email_verification\":false,\"saml_account_id\":\"\",\"saml_organization_id\":\"\",\"preferred_account_id\":\"\",\"command_bar_signed_user_id\":\"5ce1cfdc07667202ef307e4f09fc55b4be96d408351691fbb6b8d251ca05b331\",\"managed_by_sso_or_directory_sync\":false,\"access_token\":\"nfu_8baaMjNZrdsV5N17EmF7ktJukvN9bEtgab25\"},\"new_user\":null}',
+      e.origin
+    );
+  }
+}
+
+window.addEventListener("message", recieveMessage, false);
+window.opener.postMessage("authorizing:google", "*");
+})()
+</script>
+
+  </div>
+
+
+</body></html>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EASE | Premium Apparel & Varsity</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style id="bulk-modal-style">
+        /* Bulk Registration Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 30px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 500px;
+            top: 50%;
+            position: relative;
+            transform: translateY(-50%);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        
+        .modal-close:hover {
+            color: #4a148c;
+        }
+    </style>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4a148c;
+            --primary-light: #7b1fa2;
+            --dark: #232f3e;
+            --accent: #ffc107;
+            --light: #f4f7f9;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.7);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--light); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- NAVIGATION (Sticky & Modern) --- */
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 10px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo-container { display: flex; align-items: center; cursor: pointer; }
+        .logo-container img { height: 120px; width: auto; transition: var(--transition); }
+        .logo-container img:hover { transform: scale(1.05); }
+
+        .nav-links { display: flex; gap: 20px; list-style: none; }
+        .nav-links a { 
+            text-decoration: none; color: var(--dark); font-weight: 600; 
+            font-size: 14px; transition: var(--transition);
+            text-transform: uppercase; letter-spacing: 1px;
+            padding: 8px 12px; border-radius: 8px;
+        }
+        .nav-links a:hover, .nav-links a.active { color: white; background: var(--primary); }
+
+        .cart-icon { position: relative; cursor: pointer; font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .points-badge { background: var(--accent); color: var(--dark); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
+
+        /* --- SPECIAL REWARDS BANNER --- */
+        .promo-bar {
+            background: linear-gradient(90deg, #4a148c, #ffc107);
+            color: white; padding: 8px; text-align: center; font-size: 12px; font-weight: bold; letter-spacing: 1px;
+        }
+
+        /* --- PAGE CONTENT CONTROL --- */
+        .page { display: none; padding: 40px 6%; min-height: 80vh; }
+        .active-page { display: block; }
+
+        /* --- HERO --- */
+        .hero { 
+            background: linear-gradient(rgba(49, 11, 97, 0.6), rgba(49, 11, 97, 0.6)), 
+                        url('https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center; height: 600px; border-radius: 30px; 
+            display: flex; flex-direction: column; justify-content: center; 
+            align-items: center; color: white; text-align: center; margin-bottom: 60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .hero h1 { font-family: 'Montserrat', sans-serif; font-size: clamp(32px, 8vw, 68px); font-weight: 900; }
+
+        /* --- REWARDS SYSTEM UI --- */
+        .rewards-card {
+            background: var(--white); border-radius: 25px; padding: 30px; margin-bottom: 50px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid rgba(74, 20, 140, 0.1);
+        }
+        .points-balance { font-size: 48px; font-weight: 900; color: var(--primary); }
+        .tier-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 50px; font-size: 12px; }
+
+        /* --- PRODUCT GRID & CARDS --- */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .card { 
+            background: white; border-radius: 25px; overflow: hidden; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: var(--transition); 
+            position: relative; border: 1px solid #eee; 
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+        .card img { width: 100%; height: 380px; object-fit: cover; transition: var(--transition); }
+        .card:hover img { transform: scale(1.05); }
+        
+        .limited-tag {
+            position: absolute; top: 15px; right: 15px; background: var(--accent);
+            color: var(--dark); padding: 5px 12px; border-radius: 10px; font-weight: 800; font-size: 11px;
+            z-index: 10; display: none; /* Show only for limited items */
+        }
+
+        /* --- SHOP + DETAILS LAYOUT --- */
+        .shop-container { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        .details-sidebar { 
+            background: var(--white); padding: 30px; border-radius: 25px; 
+            position: sticky; top: 120px; height: fit-content;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        /* --- BUTTONS --- */
+        .btn { 
+            padding: 15px 30px; border: none; border-radius: 50px; cursor: pointer; 
+            font-weight: 800; transition: var(--transition); text-transform: uppercase;
+            font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--accent); color: var(--dark); transform: translateY(-2px); }
+        .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 992px) {
+            .shop-container { grid-template-columns: 1fr; }
+            .details-sidebar { position: relative; top: 0; }
+        }
+        @media (max-width: 768px) {
+            nav { flex-direction: column; padding: 15px; }
+            .nav-links { margin-top: 15px; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .logo-container img { height: 80px; }
+            .hero { height: 450px; margin: 10px; }
+        }
+
+        /* Animations */
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <div class="promo-bar animate__animated animate__fadeIn">
+        <i class="fas fa-crown"></i> VIP EARLY ACCESS: EARLY RELEASE FOR LOYAL CUSTOMERS ACTIVE NOW!
+    </div>
+
+    <!-- NOTIFICATION SYSTEM -->
+    <div id="notification" style="
+        display: none;
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: linear-gradient(135deg, #4a148c, #7b1fa2);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        max-width: 400px;
+        z-index: 5000;
+        animation: slideIn 0.4s ease-out;
+        white-space: pre-wrap;
+        line-height: 1.5;
+    " style="transition: opacity 0.3s;">
+    </div>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+        <div class="logo-container" onclick="showPage('home')">
+            <img src="C:\Users\juris\Desktop\websites - Copy\assets\fourth.jpg" alt="EASE Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+            <li><a href="#" onclick="showPage('shop')" id="nav-shop">Shop</a></li>
+            <li><a href="#" onclick="showPage('customizer')" id="nav-customizer">Design</a></li>
+            <li><a href="#" onclick="showPage('bulk')" id="nav-bulk">Bulk Orders</a></li>
+            <li><a href="#" onclick="showContactForm()" id="nav-contact">Contact</a></li>
+        </ul>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div id="bulk-user-display" style="font-size: 13px; color: #666; font-weight: 600;"></div>
+            <div class="cart-icon" onclick="showCheckoutView()" style="cursor: pointer;">
+                <i class="fas fa-shopping-bag"></i>
+                <div class="points-badge" id="cart-badge" style="display: none; background: var(--accent); width: 24px; height: 24px; border-radius: 50%; flex: 1; align-items: center; justify-content: center; font-size: 11px;">0</div>
+            </div>
+            <div class="points-badge" id="pts-display" style="background: var(--accent);">0 PTS</div>
+        </div>
+    </nav>
+
+    <div id="home" class="page active-page">
+        <div class="hero floating" data-aos="zoom-in">
+            <h1 class="animate__animated animate__fadeInDown">WEAR YOUR PRIDE.</h1>
+            <p class="animate__animated animate__fadeInUp">Premium Varsity Jackets for ISU Cabagan and Professional Organizations.</p>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="showPage('shop')">Shop Collection</button>
+                <button class="btn btn-outline" style="background:white;" onclick="showPage('customizer')">Custom Design</button>
+            </div>
+        </div>
+
+        <div class="section-title" style="text-align: center; margin-bottom: 40px;" data-aos="fade-up">
+            <h2 style="font-family:'Montserrat'; font-size: 32px; color: var(--primary);">LOYALTY & REWARDS</h2>
+            <p>Every purchase brings you closer to exclusive designs.</p>
+        </div>
+
+        <div class="rewards-card" data-aos="fade-up">
+            <div style="flex: 1; min-width: 250px;">
+                <span class="tier-badge" id="user-tier">STANDARD MEMBER</span>
+                <h3 style="margin-top: 10px;">Your Rewards Balance</h3>
+                <p style="font-size: 14px; opacity: 0.7;">Redeem points for discounts or free premium upgrades.</p>
+            </div>
+            <div style="text-align: center; flex: 1;">
+                <div class="points-balance" id="points-val">0</div>
+                <p style="font-weight: 800; letter-spacing: 2px;">POINTS EARNED</p>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-primary" style="width: 100%;" onclick="showLoyaltyBenefits()">View Benefits</button>
+                <button class="btn btn-outline" style="width: 100%;" onclick="showLoyaltyBenefits()">Redeem Coupons</button>
+            </div>
+        </div>
+
+        <div class="product-grid" style="margin-bottom: 60px;">
+            <div style="padding: 25px; background: white; border-radius: 20px;" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-gift" style="font-size: 30px; color: var(--accent);"></i>
+                <h4 style="margin: 15px 0;">1. Reward Points</h4>
+                <p style="font-size: 14px;">Earn 100 points for every purchase. Redeem for massive discounts or free varsity jackets!</p>
+            </div>
+            <div style="padding: 25px; background: white; border-radius: 20px;" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-star" style="font-size: 30px; color: var(--accent);"></i>
+                <h4 style="margin: 15px 0;">2. Limited Editions</h4>
+                <p style="font-size: 14px;">Unlock exclusive, limited-run designs only available to our loyal members.</p>
+            </div>
+            <div style="padding: 25px; background: white; border-radius: 20px;" data-aos="fade-up" data-aos-delay="300">
+                <i class="fas fa-clock" style="font-size: 30px; color: var(--accent);"></i>
+                <h4 style="margin: 15px 0;">3. Early Access</h4>
+                <p style="font-size: 14px;">Get first dibs on new seasonal drops and promotional sales before anyone else.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="shop" class="page">
+        <div class="section-title" data-aos="fade-right">
+            <h2 style="font-family:'Montserrat';">PREMIUM CATALOG</h2>
+            <p>Quality that speaks for itself.</p>
+        </div>
+
+        <div class="shop-container">
+            <div class="product-grid">
+                <div class="card" data-aos="fade-up">
+                    <img src="C:\Users\juris\Desktop\websites - Copy\assets\first.jpg" alt="Executive Varsity">
+                    <div style="padding: 20px;">
+                        <h3 style="font-size: 18px;">Executive Windbraker University Jacket </h3>
+                        <p style="color: var(--primary); font-weight: 800; font-size: 20px; margin: 5px 0;">₱850.00</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" style="flex: 2;" onclick="addToCart('Executive Purple', 1850, 1)">Buy & Earn Points</button>
+                            <button class="btn btn-outline" style="flex: 1;" onclick="updateDetails('Executive Purple', '1,850.00', 'Premium Wool Body, Leather Sleeves, Quilted Lining, High-Definition ISU Embroidery.')"><i class="fas fa-info-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="limited-card" style="opacity: 0.6; filter: grayscale(1);" data-aos="fade-up" data-aos-delay="100">
+                    <div class="limited-tag" id="vip-tag" style="display: block; background: #333; color: white;">LOCKED</div>
+                    <img src="C:\Users\juris\Desktop\websites - Copy\assets\679564190_1455783606011765_4540925597800866487_n.jpg">
+                    <div style="padding: 20px;">
+                        <h3 style="font-size: 18px;">buy one get one</h3>
+                        <p style="color: var(--primary); font-weight: 800; font-size: 20px; margin: 5px 0;">₱1,500.00</p>
+                        <p id="lock-msg" style="font-size: 11px; color: red; margin-bottom: 10px;">Earn 500 points to unlock this design.</p>
+                        <button class="btn" id="lock-btn" disabled style="width: 100%; background: #ccc; cursor: not-allowed;">Loyal Customers Only</button>
+                    </div>
+                </div>
+
+                <div class="card" data-aos="fade-up" data-aos-delay="200">
+                    <img src="C:\Users\juris\Desktop\websites - Copy\assets\thrd.jpg">
+                    <div style="padding: 20px;">
+                        <h3 style="font-size: 18px;">Varsity jacket</h3>
+                        <p style="color: var(--primary); font-weight: 800; font-size: 20px; margin: 5px 0;">₱850.00</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" style="flex: 2;" onclick="addToCart('Midnight Bomber', 1200, 1)">Buy & Earn Points</button>
+                            <button class="btn btn-outline" style="flex: 1;" onclick="updateDetails('Midnight Bomber', '1,200.00', 'Lightweight Satin Finish, Windproof Shell, Minimalist EASE Branding.')"><i class="fas fa-info-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-sidebar animate__animated animate__fadeInRight" id="product-details">
+                <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-tag"></i> Product Details</h3>
+                <hr style="opacity: 0.1; margin-bottom: 20px;">
+                <div id="details-content">
+                    <p style="opacity: 0.6; font-style: italic;">Tap the info icon on a product to see details here.</p>
+                </div>
+                <div id="full-info" style="display: none;">
+                    <h2 id="det-name" style="margin-bottom: 5px;">-</h2>
+                    <p id="det-price" style="font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 20px;">₱0.00</p>
+                    <h4 style="margin-bottom: 10px;">Specifications:</h4>
+                    <p id="det-desc" style="font-size: 14px; margin-bottom: 20px;">-</p>
+                    <div style="background: var(--light); padding: 15px; border-radius: 12px; font-size: 12px;">
+                        <i class="fas fa-shipping-fast"></i> Ready for delivery to <b>Cabagan/Sto. Tomas</b>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="customizer" class="page">
+        <div class="section-title">
+            <h2 style="font-family:'Montserrat';">DESIGN STUDIO</h2>
+            <p>Create your unique EASE Varsity.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+            <div style="background: #ddd; border-radius: 30px; height: 500px; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative;" id="jacket-preview">
+                <img src="C:\Users\juris\Desktop\websites - Copy\assets\first.jpg" style="height: 90%;">
+                <img src="C:\Users\juris\Desktop\websites - Copy\assets\first.jpg" id="patch1" style="position: absolute; width: 60px; top: 35%; left: 40%; display: none;">
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 25px;">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">Customization Panel</h3>
+                <label>Jacket Base Color:</label>
+                <select onchange="changeColor(this.value)" style="width: 100%; padding: 12px; margin: 10px 0 20px; border-radius: 10px; border: 1px solid #ddd;">
+                    <option value="#ddd">Neutral Gray</option>
+                    <option value="#4a148c">ISU Purple</option>
+                    <option value="#232f3e">Deep Black</option>
+                </select>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" onchange="togglePatch()" style="width: 20px; height: 20px;"> Add Chest Patch (+₱250)
+                </label>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 30px;" onclick="alert('Design Quote Sent!')">Submit Design</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bulk" class="page">
+        <div class="section-title" data-aos="fade-right">
+            <h2 style="font-family:'Montserrat'; font-size: 42px;">BULK ORDERS</h2>
+            <p style="font-size: 16px;">Order any quantity with flexible pricing. Minimum 1 piece.</p>
+        </div>
+
+        <div style="max-width: 800px; margin: auto;">
+            <!-- NOT LOGGED IN STATE -->
+            <div id="bulk-login-state" style="text-align: center;">
+                <div style="background: linear-gradient(135deg, rgba(74, 20, 140, 0.1), rgba(123, 31, 162, 0.1)); padding: 60px 40px; border-radius: 30px; margin-bottom: 30px; border: 2px solid rgba(74, 20, 140, 0.2);">
+                    <i class="fas fa-lock" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="color: var(--primary); font-size: 24px; margin-bottom: 15px;">Register or Sign In</h3>
+                    <p style="color: #666; font-size: 15px; margin-bottom: 30px;">Create an account to access bulk order pricing and place orders!</p>
+                    <button class="btn btn-primary" onclick="showBulkLoginRegister()" style="padding: 16px 40px; font-size: 15px; margin-bottom: 15px; width: 100%; max-width: 300px;">
+                        <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i> Access Bulk Orders
+                    </button>
+                    <p style="color: #999; font-size: 13px; margin-top: 20px;">First time? No problem! Complete registration in seconds.</p>
+                </div>
+            </div>
+
+            <!-- LOGGED IN STATE -->
+            <div id="bulk-form-state" style="display: none;">
+                <!-- User Welcome Card -->
+                <div style="background: linear-gradient(135deg, #4a148c, #7b1fa2); color: white; padding: 30px; border-radius: 25px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(74, 20, 140, 0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <p style="opacity: 0.9; font-size: 13px; margin: 0 0 5px 0;">Welcome back!</p>
+                            <h2 style="margin: 0; font-size: 28px;" id="bulk-user-welcome">User</h2>
+                            <p id="bulk-user-name" style="margin: 5px 0; opacity: 0.8; font-size: 13px;"></p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 40px; font-weight: 900; line-height: 1;">
+                                <i class="fas fa-shopping-bag" style="opacity: 0.7;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px;">
+                        <p style="margin: 0; font-size: 12px; opacity: 0.9;">Total Orders: <strong id="bulk-user-orders">0</strong> | Total Points: <strong id="bulk-user-points">0</strong></p>
+                    </div>
+                </div>
+
+                <!-- Order Form Card -->
+                <div style="background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid rgba(74, 20, 140, 0.1); margin-bottom: 30px;">
+                    <h3 style="color: var(--primary); font-size: 20px; margin-bottom: 30px;">📋 Place Your Bulk Order</h3>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; color: var(--primary); font-weight: 600; margin-bottom: 10px;">Quantity (Pieces)</label>
+                        <input type="number" id="bulk-qty" placeholder="Enter Quantity (Min. 1)" min="1" value="20" style="width: 100%; padding: 16px; border-radius: 12px; border: 2px solid rgba(74, 20, 140, 0.2); font-size: 15px; box-sizing: border-box; transition: var(--transition);">
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <label style="display: block; color: var(--primary); font-weight: 600; margin-bottom: 10px;">Delivery Location</label>
+                        <select id="bulk-town" style="width: 100%; padding: 16px; border-radius: 12px; border: 2px solid rgba(74, 20, 140, 0.2); font-size: 15px; box-sizing: border-box; transition: var(--transition);">
+                            <option value="0">Select Delivery Location</option>
+                            <option>Cabagan</option>
+                            <option>Sto. Tomas</option>
+                            <option>Tumauini</option>
+                            <option>Ilagan</option>
+                            <option>Others</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px; padding: 16px; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;" onclick="calculateBulk()">
+                        <i class="fas fa-calculator"></i> Get Quotation
+                    </button>
+
+                    <div id="bulk-res" style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, rgba(74, 20, 140, 0.05), rgba(123, 31, 162, 0.05)); border-radius: 15px; display: none; border: 1px solid rgba(74, 20, 140, 0.1);"></div>
+
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 20px; padding: 14px;" onclick="bulkUserLogout()">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Sign Out
+                    </button>
+                </div>
+
+                <!-- Pricing Info -->
+                <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; border: 1px solid #eee;">
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">💰 Bulk Pricing</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <p style="color: #999; font-size: 13px; margin-bottom: 8px;">Unit Price</p>
+                            <p style="font-size: 28px; font-weight: 900; color: var(--primary);">₱1,450</p>
+                        </div>
+                        <div>
+                            <p style="color: #999; font-size: 13px; margin-bottom: 8px;">Discount (20+ pcs)</p>
+                            <p style="font-size: 28px; font-weight: 900; color: #4caf50;">5% OFF</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT PAGE -->
+    <div id="contact" class="page">
+        <div class="section-title" data-aos="fade-right">
+            <h2 style="font-family:'Montserrat'; font-size: 42px;">CONTACT US</h2>
+            <p style="font-size: 16px;">We're here to help! Get in touch with our team.</p>
+        </div>
+
+        <div style="max-width: 1000px; margin: 60px auto;">
+            <!-- Contact Cards Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-bottom: 50px;">
+                <!-- Contact Method 1 -->
+                <div style="background: white; padding: 35px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid #4a148c; transition: transform 0.3s, box-shadow 0.3s;" data-aos="fade-up" data-aos-delay="100">
+                    <div style="background: linear-gradient(135deg, rgba(74, 20, 140, 0.1), rgba(123, 31, 162, 0.1)); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-envelope" style="font-size: 32px; color: #4a148c;"></i>
+                    </div>
+                    <h3 style="color: #4a148c; margin-bottom: 10px; font-size: 18px;">Email Support</h3>
+                    <p style="color: #666; margin: 15px 0; font-size: 14px;">Send us your inquiries and we'll respond within 24 hours</p>
+                    <p style="color: #4a148c; font-weight: 600;">contact@ease.com</p>
+                </div>
+
+                <!-- Contact Method 2 -->
+                <div style="background: white; padding: 35px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid #ffc107; transition: transform 0.3s, box-shadow 0.3s;" data-aos="fade-up" data-aos-delay="200">
+                    <div style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.1)); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-phone" style="font-size: 32px; color: #ffc107;"></i>
+                    </div>
+                    <h3 style="color: #ffc107; margin-bottom: 10px; font-size: 18px;">Call Us</h3>
+                    <p style="color: #666; margin: 15px 0; font-size: 14px;">Available Monday-Friday, 9 AM to 5 PM</p>
+                    <p style="color: #ffc107; font-weight: 600;">+63 XXX XXXX XXX</p>
+                </div>
+
+                <!-- Contact Method 3 -->
+                <div style="background: white; padding: 35px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid #7b1fa2; transition: transform 0.3s, box-shadow 0.3s;" data-aos="fade-up" data-aos-delay="300">
+                    <div style="background: linear-gradient(135deg, rgba(123, 31, 162, 0.1), rgba(74, 20, 140, 0.1)); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-map-marker-alt" style="font-size: 32px; color: #7b1fa2;"></i>
+                    </div>
+                    <h3 style="color: #7b1fa2; margin-bottom: 10px; font-size: 18px;">Visit Us</h3>
+                    <p style="color: #666; margin: 15px 0; font-size: 14px;">Come visit our office in Isabela</p>
+                    <p style="color: #7b1fa2; font-weight: 600;">Cabagan, Isabela, PH</p>
+                </div>
+            </div>
+
+            <!-- Main Contact Form Card -->
+            <div style="background: white; padding: 50px; border-radius: 30px; box-shadow: 0 15px 45px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 30px;" data-aos="fade-up">
+                <!-- Background accent -->
+                <div style="position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: linear-gradient(135deg, rgba(74, 20, 140, 0.05), rgba(123, 31, 162, 0.05)); border-radius: 50%; margin: -100px -100px 0 0; pointer-events: none;"></div>
+
+                <div style="position: relative; z-index: 1;">
+                    <h2 style="font-family: 'Montserrat'; font-size: 32px; color: #4a148c; margin-bottom: 15px; text-align: center;">Send Us a Message</h2>
+                    <p style="text-align: center; color: #666; margin-bottom: 40px; font-size: 15px;">Have any questions or feedback? We'd love to hear from you! Fill out the form below and click the button to launch our contact form.</p>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" style="padding: 16px 40px; font-size: 15px; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px;" onclick="showContactForm()">
+                            <i class="fas fa-paper-plane"></i> Open Contact Form
+                        </button>
+                        <p style="color: #999; font-size: 13px;">Response time is typically within 24 hours</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media Links -->
+            <div style="background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%); color: white; padding: 40px; border-radius: 25px; text-align: center;" data-aos="fade-up" data-aos-delay="100">
+                <h3 style="margin-bottom: 20px; font-size: 18px;">Follow Us On Social Media</h3>
+                <p style="margin-bottom: 25px; opacity: 0.9;">Stay updated with our latest designs and promotions</p>
+                <div style="display: flex; justify-content: center; gap: 30px; font-size: 28px;">
+                    <a href="#" style="color: white; transition: transform 0.3s, opacity 0.3s; text-decoration: none; opacity: 0.9;" onmouseover="this.style.opacity='1'; this.style.transform='scale(1.2)'" onmouseout="this.style.opacity='0.9'; this.style.transform='scale(1)'">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" style="color: white; transition: transform 0.3s, opacity 0.3s; text-decoration: none; opacity: 0.9;" onmouseover="this.style.opacity='1'; this.style.transform='scale(1.2)'" onmouseout="this.style.opacity='0.9'; this.style.transform='scale(1)'">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" style="color: white; transition: transform 0.3s, opacity 0.3s; text-decoration: none; opacity: 0.9;" onmouseover="this.style.opacity='1'; this.style.transform='scale(1.2)'" onmouseout="this.style.opacity='0.9'; this.style.transform='scale(1)'">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: var(--dark); color: white; padding: 60px 6% 30px; text-align: center; margin-top: 80px; border-radius: 60px 60px 0 0;">
+        <h2 style="font-family: 'Montserrat'; font-weight: 900; letter-spacing: 2px;">EASE APPAREL</h2>
+        <p style="opacity: 0.6; margin: 10px 0;">Premium Manufacturer in Isabela, Philippines.</p>
+        <div style="font-size: 24px; margin: 20px 0;">
+            <i class="fab fa-facebook" style="margin: 0 15px; cursor: pointer;"></i>
+            <i class="fab fa-instagram" style="margin: 0 15px; cursor: pointer;"></i>
+        </div>
+        <p style="font-size: 12px; opacity: 0.4;">&copy; 2026 EASE. Officially Built for Excellence.</p>
+    </footer>
+
+    <!-- BULK REGISTRATION MODAL (Backward Compatibility)-->
+    <div id="bulk-register-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeBulkModal()">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Bulk Order Registration</h2>
+            <p style="margin-bottom: 20px; opacity: 0.7;">Create an account to proceed with your bulk order.</p>
+            
+            <input type="email" id="bulk-email" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #ddd;">
+            <input type="text" id="bulk-name" placeholder="Full Name" style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #ddd;">
+            <input type="tel" id="bulk-phone" placeholder="Phone Number" style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #ddd;">
+            
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; color: var(--primary); font-weight: 600; margin-bottom: 8px; font-size: 14px;">📍 Barangay</label>
+                <input type="text" id="bulk-barangay" placeholder="e.g. Cabagan, Sto. Tomas" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 14px;">
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; color: var(--primary); font-weight: 600; margin-bottom: 8px; font-size: 14px;">🏘️ Purok/Block/Street</label>
+                <input type="text" id="bulk-purok" placeholder="e.g. Purok 1, Block A, or Street Address" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 14px;">
+            </div>
+            
+            <p style="font-size: 12px; margin-bottom: 20px;">An admin will contact you within 24 hours to confirm and discuss payment options.</p>
+            
+            <button class="btn btn-primary" onclick="registerBulkUser()" style="width: 100%; margin-bottom: 10px;">Complete Registration</button>
+            <button class="btn btn-outline" onclick="closeBulkModal()" style="width: 100%;">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Initialize AOS animations
+        AOS.init({ duration: 1000, once: true });
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active-page');
+            if (document.getElementById('nav-' + pageId)) {
+                document.getElementById('nav-' + pageId).classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            unlockVIPContent();
+        });
+    </script>
+</body>
+</html>

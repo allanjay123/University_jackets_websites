@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EASE Admin Dashboard</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- EMERGENCY ADMIN INITIALIZATION -->
+    <script>
+        (function() {
+            console.log('🔐 Initializing EASE Admin System...');
+            
+            // Ensure admin credentials exist IMMEDIATELY
+            const DEFAULT_ADMIN = {
+                id: 1,
+                username: 'admin',
+                email: 'ease@gmail.com',
+                password: 'ease123',
+                role: 'admin',
+                fullName: 'EASE Admin'
+            };
+            
+            const existing = localStorage.getItem('EASE_adminUsers');
+            if (!existing) {
+                localStorage.setItem('EASE_adminUsers', JSON.stringify([DEFAULT_ADMIN]));
+                console.log('✅ Admin credentials initialized in localStorage');
+            } else {
+                console.log('✅ Admin credentials already exist');
+            }
+            
+            // Make admin object globally accessible
+            window.DEFAULT_ADMIN = DEFAULT_ADMIN;
+        })();
+    </script>
+
+    <style>
+        :root {
+            --primary: #4a148c;
+            --primary-light: #7b1fa2;
+            --dark: #232f3e;
+            --accent: #ffc107;
+            --light: #f4f7f9;
+            --white: #ffffff;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --info: #2196f3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--light); color: var(--dark); line-height: 1.6; }
+
+        /* LOGIN PAGE */
+        #login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .login-box p {
+            text-align: center;
+            opacity: 0.6;
+            margin-bottom: 30px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .login-box button:hover {
+            background: var(--primary-light);
+        }
+
+        /* DASHBOARD */
+        #dashboard-container {
+            display: none;
+            min-height: 100vh;
+            background: var(--light);
+        }
+
+        .admin-header {
+            background: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            borderBottom: 3px solid var(--primary);
+        }
+
+        .admin-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            color: var(--primary);
+            font-weight: 900;
+        }
+
+        .admin-header-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .admin-header button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .export-btn {
+            background: var(--info);
+            color: white;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* MAIN CONTENT */
+        .admin-main {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: white;
+            padding: 30px 0;
+            border-right: 1px solid #eee;
+            overflow-y: auto;
+        }
+
+        .admin-nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-nav button {
+            background: none;
+            border: none;
+            padding: 15px 25px;
+            text-align: left;
+            cursor: pointer;
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .admin-nav button:hover,
+        .admin-nav button.active {
+            background: rgba(74, 20, 140, 0.1);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        #dashboard-overview {
+            margin-bottom: 30px;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: var(--primary);
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #999;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-card.full {
+            grid-column: 1 / -1;
+            border-left-color: var(--success);
+        }
+
+        /* TABS */
+        .admin-tab {
+            display: none;
+        }
+
+        .admin-tab h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        /* TABLES */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .admin-table thead {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table tbody tr:hover {
+            background: rgba(74, 20, 140, 0.05);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        /* BUTTONS */
+        .btn-small {
+            padding: 8px 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .btn-small:hover {
+            background: var(--primary-light);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            background: white;
+            padding: 30px;
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-section:last-child {
+            border-bottom: none;
+        }
+
+        .modal-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .modal-section p {
+            margin-bottom: 8px;
+        }
+
+        .modal-section select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .admin-main {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+                display: flex;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                padding: 0;
+            }
+
+            .admin-nav {
+                flex-direction: row;
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .admin-nav button {
+                padding: 12px 15px;
+                font-size: 12px;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+            }
+
+            .admin-nav button.active {
+                border-bottom-color: var(--primary);
+                border-left: none;
+            }
+
+            .admin-table {
+                font-size: 12px;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN PAGE -->
+    <div id="login-container">
+        <div class="login-box">
+            <h1>EASE</h1>
+            <p>Admin Dashboard Login</p>
+            <input type="text" id="admin-username" placeholder="Email or Username" autofocus>
+            <input type="password" id="admin-password" placeholder="Password">
+            <button onclick="adminLogin()">Login</button>
+            <p style="margin-top: 20px; font-size: 12px;">
+                Login Credentials: <br>
+                Email: <strong>ease@gmail.com</strong><br>
+                Password: <strong>ease123</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboard-container">
+        <div class="admin-header">
+            <div class="admin-title">EASE Admin</div>
+            <div class="admin-header-right">
+                <button class="export-btn" onclick="exportOrdersToCSV()">
+                    <i class="fas fa-download"></i> Export Orders
+                </button>
+                <button class="logout-btn" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-main">
+            <div class="admin-sidebar">
+                <div class="admin-nav">
+                    <button class="active" onclick="switchAdminTab('dashboard')">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </button>
+                    <button onclick="switchAdminTab('orders')">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </button>
+                    <button onclick="switchAdminTab('users')">
+                        <i class="fas fa-users"></i> Bulk Users
+                    </button>
+                    <button onclick="switchAdminTab('contacts')">
+                        <i class="fas fa-envelope"></i> Contacts
+                    </button>
+                    <button onclick="switchAdminTab('stats')">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </button>
+                </div>
+            </div>
+
+            <div class="admin-content">
+                <div id="dashboard-overview"></div>
+
+                <div id="orders-tab" class="admin-tab"></div>
+                <div id="users-tab" class="admin-tab"></div>
+                <div id="contacts-tab" class="admin-tab"></div>
+                <div id="stats-tab" class="admin-tab"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER DETAILS MODAL -->
+    <div id="order-modal" class="modal">
+        <!-- Content loaded dynamically -->
+    </div>
+
+    <script src="../js/data.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

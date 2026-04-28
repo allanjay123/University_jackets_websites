@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #4a148c;
+            font-weight: 900;
+        }
+        p {
+            text-align: center;
+            opacity: 0.6;
+            margin-bottom: 30px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #4a148c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #7b1fa2;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 12px;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .info strong {
+            color: #4a148c;
+        }
+        .success {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        .error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>EASE</h1>
+        <p>Admin Dashboard Login Test</p>
+        
+        <input type="text" id="username" placeholder="Email or Username" value="ease@gmail.com" autofocus>
+        <input type="password" id="password" placeholder="Password" value="ease123">
+        
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="resetData()" style="background: #ff9800;">Clear & Reset Data</button>
+        
+        <div class="success" id="successMsg"></div>
+        <div class="error" id="errorMsg"></div>
+        
+        <div class="info">
+            <strong>Test Credentials:</strong><br>
+            Email: <strong>ease@gmail.com</strong><br>
+            Password: <strong>ease123</strong><br><br>
+            OR<br><br>
+            Username: <strong>admin</strong><br>
+            Password: <strong>ease123</strong>
+        </div>
+    </div>
+
+    <script>
+        // Initialize admin data on page load
+        window.addEventListener('load', function() {
+            const admin = {
+                id: 1,
+                username: 'admin',
+                email: 'ease@gmail.com',
+                password: 'ease123',
+                role: 'admin',
+                fullName: 'EASE Admin'
+            };
+            
+            const stored = localStorage.getItem('EASE_adminUsers');
+            if (!stored) {
+                localStorage.setItem('EASE_adminUsers', JSON.stringify([admin]));
+                console.log('✅ Admin account created in localStorage');
+                showSuccess('Admin account initialized in localStorage');
+            } else {
+                console.log('Admin account already exists');
+            }
+        });
+
+        function testLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            console.log('=== LOGIN TEST ===');
+            console.log('Username:', username);
+            console.log('Password:', password);
+
+            // Get admin from localStorage
+            const stored = localStorage.getItem('EASE_adminUsers');
+            if (!stored) {
+                showError('❌ No admin users found in localStorage!');
+                return;
+            }
+
+            const admins = JSON.parse(stored);
+            console.log('Stored admins:', admins);
+
+            // Find matching admin
+            const admin = admins.find(a => 
+                (a.username === username || a.email === username) && a.password === password
+            );
+
+            if (admin) {
+                console.log('✅ LOGIN SUCCESSFUL:', admin);
+                localStorage.setItem('EASE_adminLoggedIn', JSON.stringify(admin));
+                showSuccess('✅ Login successful! Credentials are correct.\n\nClick Go to Dashboard below to enter admin area.');
+                
+                setTimeout(function() {
+                    const go = confirm('✅ Login test passed!\n\nGo to admin dashboard?');
+                    if (go) {
+                        window.location.href = 'admin.html';
+                    }
+                }, 500);
+            } else {
+                console.log('❌ LOGIN FAILED');
+                showError('❌ Login failed!\n\nMake sure you entered:\n- Email: ease@gmail.com (or username: admin)\n- Password: ease123');
+            }
+        }
+
+        function resetData() {
+            if (confirm('Clear all EASE data from localStorage and reset?')) {
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('EASE_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                // Reinitialize
+                const admin = {
+                    id: 1,
+                    username: 'admin',
+                    email: 'ease@gmail.com',
+                    password: 'ease123',
+                    role: 'admin',
+                    fullName: 'EASE Admin'
+                };
+                localStorage.setItem('EASE_adminUsers', JSON.stringify([admin]));
+                
+                showSuccess('✅ Data reset successfully!\nAdmin account recreated.');
+                document.getElementById('username').value = 'ease@gmail.com';
+                document.getElementById('password').value = 'ease123';
+            }
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            document.getElementById('successMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

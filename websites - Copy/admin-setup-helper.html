@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Setup Helper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #4a148c;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #4a148c;
+            border-radius: 5px;
+        }
+        .section h2 {
+            color: #4a148c;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #4a148c;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #3a0e6a;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background: #388e3c;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #2e7d32;
+        }
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+        .btn-warning {
+            background: #fbc02d;
+            color: #333;
+        }
+        .btn-warning:hover {
+            background: #f9a825;
+        }
+        .output {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .success { color: #388e3c; font-weight: bold; }
+        .error { color: #d32f2f; font-weight: bold; }
+        .info { color: #1976d2; font-weight: bold; }
+        input {
+            padding: 8px 12px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #f0f0f0;
+            font-weight: 600;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Admin Dashboard Setup Helper</h1>
+
+        <!-- Section 1: Check System -->
+        <div class="section">
+            <h2>1️⃣ Check System Status</h2>
+            <button class="btn-primary" onclick="checkSystem()">Check Admin Data</button>
+            <button class="btn-primary" onclick="showAllData()">Show All Data</button>
+            <button class="btn-warning" onclick="viewStorageSize()">Check Storage Size</button>
+            <div id="systemOutput" class="output"></div>
+        </div>
+
+        <!-- Section 2: Initialize Admin -->
+        <div class="section">
+            <h2>2️⃣ Initialize Admin Credentials</h2>
+            <p>Ensure admin credentials are set up correctly.</p>
+            <button class="btn-success" onclick="initializeAdmin()">Initialize Admin (ease@gmail.com / ease123)</button>
+            <div id="adminOutput" class="output"></div>
+        </div>
+
+        <!-- Section 3: Add Test Data -->
+        <div class="section">
+            <h2>3️⃣ Add Sample Data (For Testing)</h2>
+            <p>Add sample orders, users, and messages to see dashboard in action.</p>
+            <button class="btn-success" onclick="addSampleOrders()">Add 3 Sample Orders</button>
+            <button class="btn-success" onclick="addSampleBulkUsers()">Add 3 Sample Users</button>
+            <button class="btn-success" onclick="addSampleContacts()">Add 3 Sample Messages</button>
+            <button class="btn-success" onclick="addAllSampleData()">Add ALL Sample Data</button>
+            <div id="sampleOutput" class="output"></div>
+        </div>
+
+        <!-- Section 4: Clear Data -->
+        <div class="section">
+            <h2>4️⃣ Clear Data</h2>
+            <p>⚠️ This will delete all data. Use carefully!</p>
+            <button class="btn-danger" onclick="clearAllData()">Clear ALL Data (Reset System)</button>
+            <button class="btn-warning" onclick="clearOldData()">Clear Only Orders/Users/Messages</button>
+            <div id="clearOutput" class="output"></div>
+        </div>
+
+        <!-- Section 5: Quick Actions -->
+        <div class="section">
+            <h2>5️⃣ Quick Actions</h2>
+            <button class="btn-primary" onclick="refreshStorage()">Refresh & Verify Storage</button>
+            <button class="btn-primary" onclick="openAdminDashboard()">Open Admin Dashboard →</button>
+            <button class="btn-primary" onclick="testLogin()">Test Login Flow</button>
+            <div id="actionsOutput" class="output"></div>
+        </div>
+
+        <!-- Section 6: Data Viewer -->
+        <div class="section">
+            <h2>6️⃣ Data Viewer</h2>
+            <button class="btn-primary" onclick="viewAdminUsers()">View Admin Users</button>
+            <button class="btn-primary" onclick="viewOrders()">View All Orders</button>
+            <button class="btn-primary" onclick="viewBulkUsers()">View Bulk Users</button>
+            <button class="btn-primary" onclick="viewContacts()">View Contacts</button>
+            <button class="btn-primary" onclick="viewAuditLog()">View Audit Log</button>
+            <div id="viewerOutput" class="output"></div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #ddd;">
+        <p style="text-align: center; color: #666; font-size: 12px;">
+            After setup, <strong>click "Open Admin Dashboard"</strong> or open <strong>admin-dashboard.html</strong> directly.
+        </p>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('systemOutput') || document.getElementById('adminOutput') || document.getElementById('sampleOutput');
+            if (!output) return;
+            
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            output.innerHTML += `<span class="${className}">${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function getOutput(id) {
+            return document.getElementById(id);
+        }
+
+        function checkSystem() {
+            const output = getOutput('systemOutput');
+            output.innerHTML = '';
+            
+            const adminUsers = JSON.parse(localStorage.getItem('EASE_adminUsers') || '[]');
+            const orders = JSON.parse(localStorage.getItem('EASE_orders') || '[]');
+            const bulkUsers = JSON.parse(localStorage.getItem('EASE_bulkUsers') || '[]');
+            const contacts = JSON.parse(localStorage.getItem('EASE_contacts') || '[]');
+            const auditLog = JSON.parse(localStorage.getItem('EASE_auditLog') || '[]');
+            const adminLoggedIn = localStorage.getItem('EASE_adminLoggedIn');
+
+            output.innerHTML = `<span class="${adminUsers.length > 0 ? 'success' : 'error'}">✓ Admin Users: ${adminUsers.length}</span>\n`;
+            output.innerHTML += `<span class="info">✓ Orders: ${orders.length}</span>\n`;
+            output.innerHTML += `<span class="info">✓ Bulk Users: ${bulkUsers.length}</span>\n`;
+            output.innerHTML += `<span class="info">✓ Contacts: ${contacts.length}</span>\n`;
+            output.innerHTML += `<span class="info">✓ Audit Log: ${auditLog.length}</span>\n`;
+            output.innerHTML += `<span class="${adminLoggedIn ? 'success' : 'info'}">✓ Session: ${adminLoggedIn ? 'Active' : 'None'}</span>\n\n`;
+            
+            if (adminUsers.length === 0) {
+                output.innerHTML += `<span class="error">⚠️ ERROR: No admin users found!</span>\n`;
+            } else {
+                output.innerHTML += `<span class="success">✅ Admin ready: ${adminUsers[0].email}</span>\n`;
+            }
+        }
+
+        function initializeAdmin() {
+            const output = getOutput('adminOutput');
+            output.innerHTML = '';
+
+            const defaultAdmin = {
+                id: 1,
+                username: 'admin',
+                email: 'ease@gmail.com',
+                password: 'ease123',
+                role: 'admin',
+                fullName: 'EASE Admin'
+            };
+
+            localStorage.setItem('EASE_adminUsers', JSON.stringify([defaultAdmin]));
+            
+            output.innerHTML = `<span class="success">✅ Admin credentials initialized!</span>\n\n`;
+            output.innerHTML += `Email: ${defaultAdmin.email}\n`;
+            output.innerHTML += `Password: ${defaultAdmin.password}\n`;
+            output.innerHTML += `Username: ${defaultAdmin.username}\n\n`;
+            output.innerHTML += `<span class="info">Ready to login in admin-dashboard.html</span>\n`;
+        }
+
+        function addSampleOrders() {
+            const output = getOutput('sampleOutput');
+            const orders = JSON.parse(localStorage.getItem('EASE_orders') || '[]');
+
+            const sampleOrders = [
+                {
+                    id: 'ORD-20240401001',
+                    customerName: 'Juan Dela Cruz',
+                    email: 'juan@example.com',
+                    phone: '09123456789',
+                    address: '123 Main St, Manila',
+                    totalAmount: 2500,
+                    paymentMethod: 'Cash on Delivery',
+                    status: 'pending',
+                    paymentStatus: 'unpaid',
+                    orderDate: new Date().toLocaleString(),
+                    items: [
+                        { name: 'EASE T-Shirt (Red)', quantity: 2, price: 500 },
+                        { name: 'EASE Hoodie (Black)', quantity: 1, price: 1500 }
+                    ]
+                },
+                {
+                    id: 'ORD-20240401002',
+                    customerName: 'Maria Santos',
+                    email: 'maria@example.com',
+                    phone: '09234567890',
+                    address: '456 Oak Ave, Cebu',
+                    totalAmount: 3200,
+                    paymentMethod: 'GCash',
+                    status: 'completed',
+                    paymentStatus: 'paid',
+                    orderDate: new Date(Date.now() - 86400000).toLocaleString(),
+                    items: [
+                        { name: 'EASE Cap', quantity: 3, price: 300 },
+                        { name: 'EASE Jeans', quantity: 1, price: 2600 }
+                    ]
+                },
+                {
+                    id: 'ORD-20240401003',
+                    customerName: 'Carlos Reyes',
+                    email: 'carlos@example.com',
+                    phone: '09345678901',
+                    address: '789 Pine Rd, Davao',
+                    totalAmount: 1800,
+                    paymentMethod: 'Bank Transfer',
+                    status: 'pending',
+                    paymentStatus: 'pending',
+                    orderDate: new Date(Date.now() - 172800000).toLocaleString(),
+                    items: [
+                        { name: 'EASE Jacket', quantity: 1, price: 1800 }
+                    ]
+                }
+            ];
+
+            const newOrders = [...orders, ...sampleOrders];
+            localStorage.setItem('EASE_orders', JSON.stringify(newOrders));
+
+            output.innerHTML = `<span class="success">✅ Added ${sampleOrders.length} sample orders</span>\n`;
+            output.innerHTML += `Total orders now: ${newOrders.length}\n`;
+        }
+
+        function addSampleBulkUsers() {
+            const output = getOutput('sampleOutput');
+            const bulkUsers = JSON.parse(localStorage.getItem('EASE_bulkUsers') || '[]');
+
+            const sampleUsers = [
+                {
+                    id: Date.now(),
+                    email: 'bulkuser1@example.com',
+                    password: 'pass123',
+                    fullName: 'Ana Gomez (Bulk)',
+                    phone: '09123333333',
+                    town: 'Manila',
+                    registeredDate: new Date(Date.now() - 604800000).toLocaleDateString(),
+                    totalOrders: 5,
+                    totalPoints: 1500,
+                    lastLogin: new Date().toLocaleString(),
+                    userAudit: [
+                        { action: 'User Registered', date: new Date(Date.now() - 604800000).toLocaleString(), details: 'New bulk user' },
+                        { action: 'Order Placed', date: new Date().toLocaleString(), details: 'Order #5' }
+                    ]
+                },
+                {
+                    id: Date.now() + 1,
+                    email: 'bulkuser2@example.com',
+                    password: 'pass456',
+                    fullName: 'Bob Tisoy (Wholesaler)',
+                    phone: '09234444444',
+                    town: 'Cebu',
+                    registeredDate: new Date(Date.now() - 1209600000).toLocaleDateString(),
+                    totalOrders: 12,
+                    totalPoints: 3200,
+                    lastLogin: new Date(Date.now() - 86400000).toLocaleString(),
+                    userAudit: [
+                        { action: 'User Registered', date: new Date(Date.now() - 1209600000).toLocaleString(), details: 'New bulk user' }
+                    ]
+                },
+                {
+                    id: Date.now() + 2,
+                    email: 'bulkuser3@example.com',
+                    password: 'pass789',
+                    fullName: 'Cynthia Lopez (Retailer)',
+                    phone: '09345555555',
+                    town: 'Davao',
+                    registeredDate: new Date(Date.now() - 1814400000).toLocaleDateString(),
+                    totalOrders: 8,
+                    totalPoints: 2100,
+                    lastLogin: new Date(Date.now() - 259200000).toLocaleString(),
+                    userAudit: [
+                        { action: 'User Registered', date: new Date(Date.now() - 1814400000).toLocaleString(), details: 'New bulk user' }
+                    ]
+                }
+            ];
+
+            const newUsers = [...bulkUsers, ...sampleUsers];
+            localStorage.setItem('EASE_bulkUsers', JSON.stringify(newUsers));
+
+            output.innerHTML += `<span class="success">✅ Added ${sampleUsers.length} sample bulk users</span>\n`;
+            output.innerHTML += `Total users now: ${newUsers.length}\n`;
+        }
+
+        function addSampleContacts() {
+            const output = getOutput('sampleOutput');
+            const contacts = JSON.parse(localStorage.getItem('EASE_contacts') || '[]');
+
+            const sampleContacts = [
+                {
+                    name: 'John Smith',
+                    email: 'john@email.com',
+                    phone: '09123456789',
+                    subject: 'Product Inquiry',
+                    message: 'Hi, I would like to know more about bulk order discounts for your EASE apparel collection.',
+                    date: new Date().toLocaleString(),
+                    status: 'new'
+                },
+                {
+                    name: 'Patricia Garcia',
+                    email: 'patricia@email.com',
+                    phone: '09234567890',
+                    subject: 'Complaint',
+                    message: 'I received my order but one item was damaged. Please advise on replacement process.',
+                    date: new Date(Date.now() - 86400000).toLocaleString(),
+                    status: 'read'
+                },
+                {
+                    name: 'Robert Johnson',
+                    email: 'robert@email.com',
+                    phone: '09345678901',
+                    subject: 'Partnership Proposal',
+                    message: 'We are interested in becoming an EASE apparel distributor. Can we schedule a meeting?',
+                    date: new Date(Date.now() - 172800000).toLocaleString(),
+                    status: 'read'
+                }
+            ];
+
+            const newContacts = [...contacts, ...sampleContacts];
+            localStorage.setItem('EASE_contacts', JSON.stringify(newContacts));
+
+            output.innerHTML += `<span class="success">✅ Added ${sampleContacts.length} sample contacts</span>\n`;
+            output.innerHTML += `Total contacts now: ${newContacts.length}\n`;
+        }
+
+        function addAllSampleData() {
+            const output = getOutput('sampleOutput');
+            output.innerHTML = '';
+            addSampleOrders();
+            addSampleBulkUsers();
+            addSampleContacts();
+            output.innerHTML += `\n<span class="success">✅ ALL sample data added successfully!</span>\n`;
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ This will DELETE EVERYTHING. Are you sure?')) return;
+            
+            const output = getOutput('clearOutput');
+            output.innerHTML = '';
+
+            localStorage.removeItem('EASE_adminUsers');
+            localStorage.removeItem('EASE_orders');
+            localStorage.removeItem('EASE_bulkUsers');
+            localStorage.removeItem('EASE_contacts');
+            localStorage.removeItem('EASE_auditLog');
+            localStorage.removeItem('EASE_adminLoggedIn');
+
+            initializeAdmin();
+            
+            output.innerHTML = `<span class="error">✓ All data cleared</span>\n`;
+            output.innerHTML += `<span class="success">✓ Admin credentials re-initialized</span>\n`;
+        }
+
+        function clearOldData() {
+            if (!confirm('Clear orders, users, and messages? Keep admin credentials?')) return;
+            
+            const output = getOutput('clearOutput');
+            output.innerHTML = '';
+
+            localStorage.setItem('EASE_orders', JSON.stringify([]));
+            localStorage.setItem('EASE_bulkUsers', JSON.stringify([]));
+            localStorage.setItem('EASE_contacts', JSON.stringify([]));
+
+            output.innerHTML = `<span class="success">✅ Orders, Users, Contacts cleared</span>\n`;
+            output.innerHTML += `<span class="info">Admin credentials preserved</span>\n`;
+        }
+
+        function refreshStorage() {
+            const output = getOutput('actionsOutput');
+            output.innerHTML = '';
+
+            const adminUsers = JSON.parse(localStorage.getItem('EASE_adminUsers') || '[]');
+            if (adminUsers.length === 0) {
+                const defaultAdmin = {
+                    id: 1,
+                    username: 'admin',
+                    email: 'ease@gmail.com',
+                    password: 'ease123',
+                    role: 'admin',
+                    fullName: 'EASE Admin'
+                };
+                localStorage.setItem('EASE_adminUsers', JSON.stringify([defaultAdmin]));
+                output.innerHTML = `<span class="success">✅ Re-initialized admin credentials</span>\n`;
+            }
+
+            checkSystem();
+        }
+
+        function openAdminDashboard() {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        function testLogin() {
+            const output = getOutput('actionsOutput');
+            output.innerHTML = '';
+
+            const adminUsers = JSON.parse(localStorage.getItem('EASE_adminUsers') || '[]');
+            if (adminUsers.length === 0) {
+                output.innerHTML = `<span class="error">❌ No admin users!</span>\n`;
+                return;
+            }
+
+            const admin = adminUsers[0];
+            output.innerHTML = `<span class="info">Testing login...</span>\n\n`;
+            output.innerHTML += `Email: ${admin.email}\n`;
+            output.innerHTML += `Password: ${admin.password}\n`;
+            output.innerHTML += `Username: ${admin.username}\n\n`;
+
+            if (admin.email === 'ease@gmail.com' && admin.password === 'ease123') {
+                output.innerHTML += `<span class="success">✅ Credentials are CORRECT</span>\n`;
+                output.innerHTML += `<span class="success">✅ Ready to login in admin-dashboard.html</span>\n`;
+            } else {
+                output.innerHTML += `<span class="error">❌ Credentials mismatch!</span>\n`;
+            }
+        }
+
+        function showAllData() {
+            const output = getOutput('systemOutput');
+            output.innerHTML = '';
+
+            const adminUsers = JSON.parse(localStorage.getItem('EASE_adminUsers') || '[]');
+            const orders = JSON.parse(localStorage.getItem('EASE_orders') || '[]');
+            const bulkUsers = JSON.parse(localStorage.getItem('EASE_bulkUsers') || '[]');
+            const contacts = JSON.parse(localStorage.getItem('EASE_contacts') || '[]');
+            const auditLog = JSON.parse(localStorage.getItem('EASE_auditLog') || '[]');
+
+            output.innerHTML = `<span class="info">ADMIN USERS: ${adminUsers.length}</span>\n`;
+            adminUsers.forEach(u => output.innerHTML += `  - ${u.email} (${u.fullName})\n`);
+
+            output.innerHTML += `\n<span class="info">ORDERS: ${orders.length}</span>\n`;
+            output.innerHTML += `\n<span class="info">BULK USERS: ${bulkUsers.length}</span>\n`;
+            output.innerHTML += `\n<span class="info">CONTACTS: ${contacts.length}</span>\n`;
+            output.innerHTML += `\n<span class="info">AUDIT LOGS: ${auditLog.length}</span>\n`;
+        }
+
+        function viewStorageSize() {
+            const output = getOutput('systemOutput');
+            let total = 0;
+            for (let key in localStorage) {
+                if (key.startsWith('EASE_')) {
+                    const size = new Blob([localStorage.getItem(key)]).size;
+                    total += size;
+                    output.innerHTML += `${key}: ${(size / 1024).toFixed(2)} KB\n`;
+                }
+            }
+            output.innerHTML += `\n<span class="info">Total: ${(total / 1024).toFixed(2)} KB</span>\n`;
+        }
+
+        function viewAdminUsers() {
+            const output = getOutput('viewerOutput');
+            output.innerHTML = '<span class="info">' + JSON.stringify(JSON.parse(localStorage.getItem('EASE_adminUsers') || '[]'), null, 2) + '</span>';
+        }
+
+        function viewOrders() {
+            const output = getOutput('viewerOutput');
+            const orders = JSON.parse(localStorage.getItem('EASE_orders') || '[]');
+            output.innerHTML = `<span class="info">Orders: ${orders.length}\n` + JSON.stringify(orders, null, 2) + '</span>';
+        }
+
+        function viewBulkUsers() {
+            const output = getOutput('viewerOutput');
+            const users = JSON.parse(localStorage.getItem('EASE_bulkUsers') || '[]');
+            output.innerHTML = `<span class="info">Bulk Users: ${users.length}\n` + JSON.stringify(users, null, 2) + '</span>';
+        }
+
+        function viewContacts() {
+            const output = getOutput('viewerOutput');
+            const contacts = JSON.parse(localStorage.getItem('EASE_contacts') || '[]');
+            output.innerHTML = `<span class="info">Contacts: ${contacts.length}\n` + JSON.stringify(contacts, null, 2) + '</span>';
+        }
+
+        function viewAuditLog() {
+            const output = getOutput('viewerOutput');
+            const auditLog = JSON.parse(localStorage.getItem('EASE_auditLog') || '[]');
+            output.innerHTML = `<span class="info">Audit Log: ${auditLog.length}\n` + JSON.stringify(auditLog, null, 2) + '</span>';
+        }
+
+        // Initialize on load
+        window.addEventListener('load', checkSystem);
+    </script>
+</body>
+</html>
