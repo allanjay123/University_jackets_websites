@@ -272,7 +272,7 @@
         .data-table {
             background: white;
             border-radius: 10px;
-            overflow: hidden;
+            overflow-x: auto;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 30px;
         }
@@ -303,6 +303,7 @@
             font-size: 13px;
             color: var(--dark);
             border-bottom: 2px solid var(--border);
+            white-space: nowrap;
         }
 
         table td {
@@ -442,23 +443,27 @@
             <div id="orders" class="tab-content active">
                 <div class="data-table">
                     <div class="data-table-header">
-                        <h3>All Orders</h3>
+                        <h3>📦 All Orders</h3>
                     </div>
                     <table>
                         <thead>
                             <tr>
                                 <th>Order ID</th>
-                                <th>Customer</th>
+                                <th>Customer Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Quantity</th>
                                 <th>Amount</th>
-                                <th>Status</th>
-                                <th>Payment</th>
-                                <th>📍 Location</th>
+                                <th>📍 Barangay</th>
                                 <th>🏘️ Purok/Block</th>
+                                <th>Town</th>
+                                <th>Payment</th>
+                                <th>Status</th>
                                 <th>Date</th>
                             </tr>
                         </thead>
                         <tbody id="ordersBody">
-                            <tr><td colspan="8" style="text-align: center; padding: 40px;">No orders yet</td></tr>
+                            <tr><td colspan="12" style="text-align: center; padding: 40px;">No orders yet</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -652,18 +657,22 @@
         function loadOrdersTable(orders) {
             const tbody = document.getElementById('ordersBody');
             if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No orders yet</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; padding: 40px;">No orders yet</td></tr>';
                 return;
             }
             tbody.innerHTML = orders.map(o => `
                 <tr>
                     <td><strong>${o.id || 'N/A'}</strong></td>
                     <td>${o.customerName || 'Guest'}</td>
-                    <td>₱${(o.total || 0).toLocaleString()}</td>
-                    <td><span class="status-badge status-${o.status || 'pending'}">${o.status || 'Pending'}</span></td>
-                    <td><span class="status-badge status-${o.paymentStatus || 'unpaid'}">${o.paymentStatus || 'Unpaid'}</span></td>
-                    <td><strong>📍 ${o.barangay || o.town || 'N/A'}</strong></td>
+                    <td>${o.email || 'N/A'}</td>
+                    <td>${o.phone || 'N/A'}</td>
+                    <td><strong>${o.quantity || 0}</strong></td>
+                    <td><strong>₱${(o.total || 0).toLocaleString()}</strong></td>
+                    <td><strong>📍 ${o.barangay || 'N/A'}</strong></td>
                     <td>${o.purok || 'N/A'}</td>
+                    <td>${o.town || 'N/A'}</td>
+                    <td><span class="status-badge status-${o.paymentStatus || 'unpaid'}">${o.paymentMethod === 'cash' ? '💵 Cash' : '📱 GCash'}</span></td>
+                    <td><span class="status-badge status-${o.status || 'pending'}">${(o.status || 'Pending').toUpperCase()}</span></td>
                     <td>${o.orderDate || 'N/A'}</td>
                 </tr>
             `).join('');
