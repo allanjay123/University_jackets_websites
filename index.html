@@ -100,6 +100,79 @@
         }
         .nav-links a:hover, .nav-links a.active { color: white; background: var(--primary); }
 
+        /* --- ACCOUNTS DROPDOWN --- */
+        .accounts-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .accounts-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 220px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            margin-top: 10px;
+            z-index: 999;
+            overflow: hidden;
+            border: 1px solid rgba(74, 20, 140, 0.1);
+        }
+
+        .dropdown-menu.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(74, 20, 140, 0.05);
+            transition: var(--transition);
+        }
+
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu a:hover {
+            background: linear-gradient(135deg, rgba(74, 20, 140, 0.05), rgba(123, 31, 162, 0.05));
+            color: var(--primary);
+            padding-left: 24px;
+        }
+
+        .dropdown-menu i {
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+
         .cart-icon { position: relative; cursor: pointer; font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
         .points-badge { background: var(--accent); color: var(--dark); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
 
@@ -231,6 +304,18 @@
             <li><a href="#" onclick="showPage('customizer')" id="nav-customizer">Design</a></li>
             <li><a href="#" onclick="showPage('bulk')" id="nav-bulk">Bulk Orders</a></li>
             <li><a href="#" onclick="showContactForm()" id="nav-contact">Contact</a></li>
+            <li class="accounts-dropdown">
+                <a href="#" class="accounts-toggle" onclick="toggleAccountsMenu(event)" id="nav-accounts" style="text-decoration: none; color: var(--dark); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; border-radius: 8px;">
+                    Accounts
+                    <i class="fas fa-chevron-down" style="font-size: 12px; transition: var(--transition);"></i>
+                </a>
+                <div class="dropdown-menu" id="accounts-menu">
+                    <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+                    <a href="https://www.tiktok.com" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+                    <a href="https://mail.google.com" target="_blank"><i class="fas fa-envelope"></i> Gmail</a>
+                    <a href="#" onclick="handleAdsClick(event)"><i class="fas fa-ad"></i> Ads</a>
+                </div>
+            </li>
         </ul>
         <div style="display: flex; gap: 15px; align-items: center;">
             <div id="bulk-user-display" style="font-size: 13px; color: #666; font-weight: 600;"></div>
@@ -606,6 +691,28 @@
                 document.getElementById('nav-' + pageId).classList.add('active');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Accounts Dropdown Menu
+        function toggleAccountsMenu(event) {
+            event.preventDefault();
+            const menu = document.getElementById('accounts-menu');
+            menu.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.accounts-dropdown');
+            const menu = document.getElementById('accounts-menu');
+            if (!dropdown.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Handle Ads Click
+        function handleAdsClick(event) {
+            event.preventDefault();
+            alert('Ads feature coming soon! Stay tuned for our promotional campaigns.');
         }
 
         // Initialize on load
