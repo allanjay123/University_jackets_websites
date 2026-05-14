@@ -100,6 +100,79 @@
         }
         .nav-links a:hover, .nav-links a.active { color: white; background: var(--primary); }
 
+        /* --- ACCOUNTS DROPDOWN --- */
+        .accounts-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .accounts-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            min-width: 220px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            margin-top: 10px;
+            z-index: 999;
+            overflow: hidden;
+            border: 1px solid rgba(74, 20, 140, 0.1);
+        }
+
+        .dropdown-menu.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(74, 20, 140, 0.05);
+            transition: var(--transition);
+        }
+
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu a:hover {
+            background: linear-gradient(135deg, rgba(74, 20, 140, 0.05), rgba(123, 31, 162, 0.05));
+            color: var(--primary);
+            padding-left: 24px;
+        }
+
+        .dropdown-menu i {
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+
         .cart-icon { position: relative; cursor: pointer; font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
         .points-badge { background: var(--accent); color: var(--dark); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
 
@@ -223,7 +296,7 @@
         }
     </style>
         <div class="logo-container" onclick="showPage('home')">
-            <img src="C:\Users\juris\Desktop\websites - Copy\assets\fourth.jpg" alt="EASE Logo">
+            <img src="fourth.jpg" alt="EASE Logo">
         </div>
         <ul class="nav-links">
             <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
@@ -231,6 +304,18 @@
             <li><a href="#" onclick="showPage('customizer')" id="nav-customizer">Design</a></li>
             <li><a href="#" onclick="showPage('bulk')" id="nav-bulk">Bulk Orders</a></li>
             <li><a href="#" onclick="showContactForm()" id="nav-contact">Contact</a></li>
+            <li class="accounts-dropdown">
+                <a href="#" class="accounts-toggle" onclick="toggleAccountsMenu(event)" id="nav-accounts" style="text-decoration: none; color: var(--dark); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; border-radius: 8px;">
+                    Accounts
+                    <i class="fas fa-chevron-down" style="font-size: 12px; transition: var(--transition);"></i>
+                </a>
+                <div class="dropdown-menu" id="accounts-menu">
+                    <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+                    <a href="https://www.tiktok.com" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+                    <a href="https://mail.google.com" target="_blank"><i class="fas fa-envelope"></i> Gmail</a>
+                    <a href="#" onclick="handleAdsClick(event)"><i class="fas fa-ad"></i> Ads</a>
+                </div>
+            </li>
         </ul>
         <div style="display: flex; gap: 15px; align-items: center;">
             <div id="bulk-user-display" style="font-size: 13px; color: #666; font-weight: 600;"></div>
@@ -301,7 +386,7 @@
         <div class="shop-container">
             <div class="product-grid">
                 <div class="card" data-aos="fade-up">
-                    <img src="C:\Users\juris\Desktop\websites - Copy\assets\first.jpg" alt="Executive Varsity">
+                    <img src="first.jpg" alt="Executive Varsity">
                     <div style="padding: 20px;">
                         <h3 style="font-size: 18px;">Executive Windbraker University Jacket </h3>
                         <p style="color: var(--primary); font-weight: 800; font-size: 20px; margin: 5px 0;">₱850.00</p>
@@ -314,7 +399,7 @@
 
                 <div class="card" id="limited-card" style="opacity: 0.6; filter: grayscale(1);" data-aos="fade-up" data-aos-delay="100">
                     <div class="limited-tag" id="vip-tag" style="display: block; background: #333; color: white;">LOCKED</div>
-                    <img src="C:\Users\juris\Desktop\websites - Copy\assets\679564190_1455783606011765_4540925597800866487_n.jpg">
+                    <img src="679564190_1455783606011765_4540925597800866487_n.jpg">
                     <div style="padding: 20px;">
                         <h3 style="font-size: 18px;">buy one get one</h3>
                         <p style="color: var(--primary); font-weight: 800; font-size: 20px; margin: 5px 0;">₱1,500.00</p>
@@ -324,7 +409,7 @@
                 </div>
 
                 <div class="card" data-aos="fade-up" data-aos-delay="200">
-                    <img src="C:\Users\juris\Desktop\websites - Copy\assets\thrd.jpg">
+                    <img src="thrd.jpg">
                     <div style="padding: 20px;">
                         <h3 style="font-size: 18px;">Varsity jacket</h3>
                         <p style="color: var(--primary); font-weight: 800; font-size: 20px; margin: 5px 0;">₱850.00</p>
@@ -362,8 +447,8 @@
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
             <div style="background: #ddd; border-radius: 30px; height: 500px; display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative;" id="jacket-preview">
-                <img src="C:\Users\juris\Desktop\websites - Copy\assets\first.jpg" style="height: 90%;">
-                <img src="C:\Users\juris\Desktop\websites - Copy\assets\first.jpg" id="patch1" style="position: absolute; width: 60px; top: 35%; left: 40%; display: none;">
+                <img src="first.jpg" style="height: 90%;">
+                <img src="first.jpg" id="patch1" style="position: absolute; width: 60px; top: 35%; left: 40%; display: none;">
             </div>
             <div style="background: white; padding: 30px; border-radius: 25px;">
                 <h3 style="margin-bottom: 20px; color: var(--primary);">Customization Panel</h3>
@@ -371,7 +456,7 @@
                 <select onchange="changeColor(this.value)" style="width: 100%; padding: 12px; margin: 10px 0 20px; border-radius: 10px; border: 1px solid #ddd;">
                     <option value="#ddd">Neutral Gray</option>
                     <option value="#4a148c">ISU Purple</option>
-                    <option value="#232f3e">Deep Black</option>
+                    <option value="#232f3e">Deep black</option>
                 </select>
                 <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                     <input type="checkbox" onchange="togglePatch()" style="width: 20px; height: 20px;"> Add Chest Patch (+₱250)
@@ -589,8 +674,9 @@
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="../js/data.js"></script>
-    <script src="../js/main.js"></script>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+    <script src="admin.js"></script>
     <script>
         // Initialize AOS animations
         AOS.init({ duration: 1000, once: true });
@@ -605,6 +691,28 @@
                 document.getElementById('nav-' + pageId).classList.add('active');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Accounts Dropdown Menu
+        function toggleAccountsMenu(event) {
+            event.preventDefault();
+            const menu = document.getElementById('accounts-menu');
+            menu.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.accounts-dropdown');
+            const menu = document.getElementById('accounts-menu');
+            if (!dropdown.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Handle Ads Click
+        function handleAdsClick(event) {
+            event.preventDefault();
+            alert('Ads feature coming soon! Stay tuned for our promotional campaigns.');
         }
 
         // Initialize on load
